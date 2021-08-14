@@ -1,11 +1,17 @@
 {
   "name": "dead-easy-json",
   "version": "1.0.0",
-  "description": "",
+  "description": "Dead-easy JSON serialization for JavaScript",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha",
-    "ci": "eslint . && mocha"
+    "__comment": "some of these are broken. use at your own risk",
+    "test:watch": "mocha --watch-ignore [\".json\"] --watch 'src/**/*.js' 'test/**/*.spec.js' --bail",
+    "test:one": "npm run test:watch -- --grep",
+    "test:coverage": "nyc --reporter=text npm run test",
+    "ci": "npm run lint && npm run test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -18,7 +24,9 @@
     "url": "https://github.com/nopeless/dead-easy-json/issues"
   },
   "homepage": "https://github.com/nopeless/dead-easy-json#readme",
-  "dependencies": {
-    "mocha": "^9.0.3"
+  "devDependencies": {
+    "nyc": "^15.1.0",
+    "chai": "*",
+    "mocha": "*"
   }
 }
