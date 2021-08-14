@@ -1,0 +1,24 @@
+{
+  "name": "dead-easy-json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha",
+    "ci": "eslint . && mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nopeless/dead-easy-json.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nopeless/dead-easy-json/issues"
+  },
+  "homepage": "https://github.com/nopeless/dead-easy-json#readme",
+  "dependencies": {
+    "mocha": "^9.0.3"
+  }
+}
