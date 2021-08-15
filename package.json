@@ -11,7 +11,7 @@
     "test:coverage": "nyc --reporter=text npm run test",
     "test:html": "nyc --reporter=html npm run test",
     "ci": "npm run lint && npm run test",
-    "push": "npm test -- --coverage --collectCoverageFrom=\"src/**\"",
+    "push": "nyc --reporter=lcov npm run test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
