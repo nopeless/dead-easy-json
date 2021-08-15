@@ -10,33 +10,57 @@ class ProxyJson {
    * @param {Object} defaultObj
    * @param {Object} config
    */
-  constructor(dir, defaultObj = {}, config = {}) {
+  constructor(dir, defaultObj = undefined, config) {
     const str = fs.readFileSync(dir).toString();
     let rewrite = false;
-    if (str !== ``) defaultObj = JSON.parse(str);
+    if (str !== ``) {
+      const o = JSON.parse(str);
+      if (defaultObj !== undefined) {
+        if (typeof defaultObj === `object` && typeof o === `object`) {
+          if (defaultObj.constructor !== o.constructor) {
+            throw new Error(`The type stored in json does not match the default object type`);
+          }
+        } else {
+          throw new Error(`The type of both defaultObj and json should be an object`);
+        }
+      }
+      defaultObj = o;
+    }
+    if (defaultObj === undefined) {
+      defaultObj = {};
+    }
     else rewrite = true;
     this.dir = dir;
 
     this.config = {
       replacer: null,
       space: 2,
-      ...config
+      writeInterval: null,
     };
+    for (const k of Object.keys(config)) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (this.config.hasOwnProperty(k)) {
+        this.config[k] = config[k];
+      } else {
+        throw new Error(`Unrecognized option ${k} with value ${config[k]}`);
+      }
+    }
     this.defaultObj = defaultObj;
     // eslint-disable-next-line no-unused-vars
     const thenWrite = (ret, ...args) => {
-      this.write();
+      this.scheduleWrite();
       return ret;
     };
+    this.writeAwait = this.config.writeInterval === null ? Promise.reject(new Error(`Awaited a write when writeInterval was not set`)) : Promise.resolve();
+    this.writeTimer = null;
     const m = this;
     const handler = {
       // I decided to keep this interface primitive
-      // TODO: deal with test coverage
-      apply: function(...args) {
-        throw new Error(`Not supported. Arguments: ${args}`);
-        // return Reflect.apply(this, this.target, args);
-      },
-      // This function is fundamentally uncallable
+      // These function is fundamentally uncallable
+      // apply: function(...args) {
+      //   throw new Error(`Not supported. Arguments: ${args}`);
+      //   // return Reflect.apply(this, this.target, args);
+      // },
       // construct: function(...args) {
       //   return new Error(`Not supporetd. Arguments: ${args}`);
       //   // return Reflect.construct(this, this.target, args);
@@ -75,13 +99,11 @@ class ProxyJson {
           throw new Error(`Not supported. Got type [${typeof value}]`);
         }
         function recursiveAssign(target, property, value) {
-          // console.log(`Recursive assign ${property}:${value}`, value);
           if (!(typeof value === `object` && value !== null)) {
             return Reflect.set(target, property, value);
           }
           const res = Reflect.set(target, property, new Proxy(value, handler));
           for (const k of Object.keys(value)) {
-            // console.log(k);
             recursiveAssign(value, k, value[k]);
           }
           return res;
@@ -94,7 +116,7 @@ class ProxyJson {
         //   })()
         // ));
         const res = recursiveAssign(target, property, value);
-        m.write();
+        m.scheduleWrite();
         return res;
       },
       setPrototypeOf: function(...args) {
@@ -104,6 +126,7 @@ class ProxyJson {
     };
     this.handler = handler;
 
+    // Is array or an object because of the check above
     if (Array.isArray(defaultObj)) {
       this.internalSave = [...defaultObj];
     } else {
@@ -125,7 +148,10 @@ class ProxyJson {
         ...val
       };
     }
-    this._file = new Proxy(this.internalSave, this.handler);
+    this._file = new Proxy(this.internalSave.constructor(), this.handler);
+    for (const key of Object.keys(this.internalSave)) {
+      this._file[key] = this.internalSave[key];
+    }
     this.write();
   }
   // get file() {
@@ -135,6 +161,20 @@ class ProxyJson {
   //   }
   //   return this._file;
   // }
+  scheduleWrite() {
+    if (this.config.writeInterval) {
+      if (this.writeTimer) {
+        return this.writeAwait; // Don't do anything
+      }
+      return this.writeAwait = new Promise(resolve => {
+        this.writeTimer = setTimeout(
+          () => {this.writeTimer = null; this.write(); resolve();},
+          this.config.writeInterval
+        );}
+      );
+    }
+    this.write();
+  }
   /**
    * Void
    */
@@ -150,6 +190,7 @@ class ProxyJson {
         this.write();
       }
       catch (e) {
+        /* istanbul ignore next */
         reject(e);
       }
       resolve();
@@ -163,42 +204,11 @@ const DeadEasyJson = function(dirname = undefined) {
         throw new Error(`Cannot require ${file} without a directory (make sure you passed __dirname to the constructor)`);
       }
     }
-    if (config.writeInterval) {
-      throw Error(`NotImplementedError: yeah I didn't write this yet`);
-    }
     return new ProxyJson(path.join(dirname, file), defaultObj, config);
   }
   };
 };
 DeadEasyJson.require = () => {throw new Error(`You forgot to add (__dirname)`);};
-
-if (false) {
-  const Dej = DeadEasyJson(__dirname);
-  const d = Dej.require(`test.json`);
-  let {file:myFile, config} = d;
-  config.defaultObject = [];
-  // console.log(myFile.a);
-  // myFile.a = {b:{c:1}};
-  // // myFile.b = {};
-  // myFile.a.b.c=2;
-  // console.log(myFile.a);
-  d.file = [];
-  myFile = d.file;
-  console.log(myFile);
-  myFile.push([]);
-  myFile[0].push(1);
-  console.log(JSON.stringify(myFile, null, 2));
-  // setTimeout(async() => {
-  //   myFile.arr = [];
-  //   // loop 100 times
-  //   for (let i = 0; i < 100; i++) {
-  //     console.log(i);
-  //     myFile.arr.push(i);
-  //     await new Promise(r => setTimeout(r, 1000));
-  //   }
-  // }, 1000);
-}
-
 
 // Return an instance
 module.exports = DeadEasyJson;

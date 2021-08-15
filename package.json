@@ -1,7 +1,7 @@
 {
   "name": "dead-easy-json",
-  "version": "1.0.0",
-  "description": "Dead-easy JSON serialization for JavaScript",
+  "version": "1.1.0",
+  "description": "Dead-easy JSON serialization for JavaScript, with async support",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha",
@@ -9,6 +9,7 @@
     "test:watch": "mocha --watch-ignore [\".json\"] --watch 'src/**/*.js' 'test/**/*.spec.js' --bail",
     "test:one": "npm run test:watch -- --grep",
     "test:coverage": "nyc --reporter=text npm run test",
+    "test:html": "nyc --reporter=html npm run test",
     "ci": "npm run lint && npm run test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"

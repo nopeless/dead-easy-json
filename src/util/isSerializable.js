@@ -19,21 +19,20 @@ function isSerializable(obj) {
       }
       return true;
     }
-    // TODO: tidy this check because javascript is ret**ded
-    if (obj instanceof Map || obj instanceof Set || obj instanceof Promise || obj instanceof WeakMap || obj instanceof WeakSet || obj instanceof Error || obj instanceof Function || obj instanceof Symbol) {
-      return false;
-    }
-    if (obj instanceof Object) {
-      for (var key in obj) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (obj.hasOwnProperty(key)) {
-          if (!isSerializable(obj[key])) {
-            return false;
-          }
-        }
-      }
+    if (obj instanceof String || obj instanceof Boolean || obj instanceof Number) {
       return true;
     }
+    if (obj.toString() !== `[object Object]`) {
+      return false;
+    }
+    // if (obj instanceof Object)
+    for (var key in obj) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (obj.hasOwnProperty(key) && !isSerializable(obj[key])) {
+        return false;
+      }
+    }
+    return true;
   }
   // Other primitive types
   if (obj === null || type === `string` || type === `number` || type === `boolean` || obj === undefined) {

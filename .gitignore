@@ -4,6 +4,9 @@
 node_modules
 
 .nyc_output
+coverage
 
 file.json
 test.json
+
+?.*
