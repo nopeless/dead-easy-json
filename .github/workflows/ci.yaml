@@ -24,7 +24,7 @@ jobs:
           auto_fix: true
       
       - name: run ci
-        run: npm run test:coverage
+        run: npm run push
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
