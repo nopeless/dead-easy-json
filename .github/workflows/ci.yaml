@@ -22,9 +22,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           eslint: true
           auto_fix: true
-
-      - name: make test-coverage
-        run: make test-coverage
+      
+      - name: run ci
+        run: npm run test:coverage
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
