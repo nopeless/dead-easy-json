@@ -26,8 +26,9 @@
   },
   "homepage": "https://github.com/nopeless/dead-easy-json#readme",
   "devDependencies": {
-    "nyc": "^15.1.0",
     "chai": "*",
-    "mocha": "*"
+    "eslint": "^7.32.0",
+    "mocha": "*",
+    "nyc": "^15.1.0"
   }
 }
