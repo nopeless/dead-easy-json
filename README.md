@@ -1,5 +1,8 @@
 # JSON is easy
 
+![ci badge](https://github.com/nopeless/dead-easy-json/actions/workflows/ci.yaml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/nopeless/dead-easy-json/badge.svg?branch=main)](https://coveralls.io/github/nopeless/dead-easy-json?branch=main)
+
 The goal is to make a plug-and-play type of package that is used for small projects
 
 ## Quickstart
