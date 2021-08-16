@@ -10,6 +10,7 @@
     "test:one": "npm run test:watch -- --grep",
     "test:coverage": "nyc --reporter=text npm run test",
     "test:html": "nyc --reporter=html npm run test",
+    "test:docs": "npm run test test/minreq.spec.js ",
     "ci": "npm run lint && npm run test",
     "push": "nyc --reporter=lcov npm run test",
     "lint": "eslint .",
