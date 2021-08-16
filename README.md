@@ -10,17 +10,18 @@ The goal is to make a plug-and-play type of package that is used for small proje
 ```js
 const Dej = require(`dead-easy-json`)(__dirname);
 const { file: myFile } = Dej.require(`./myJson.json`);
-// // myFile = {} This is implied! You can override this behavior in config
+// // myFile = {} This is implied. You can override this behavior
 // myFile.a.b = 3; // ERROR; because a is undefined
 myFile.a = {};  // Ok; written to file system SYNCHRONOUSLY by default
 myFile.a.b = 3; // Ok; written to file system SYNCHRONOUSLY by default
-// /*
-// {
-// 	a: {
-// 		b: 3
-// 	}
-// }
-// */
+/*
+The json file will look like this
+{
+ a: {
+  b: 3
+ }
+}
+*/
 console.log(myFile.a.b); // 3
 console.log(myFile.a.c); // undefined
 // console.log(myFile.d.e); // ERROR
@@ -31,24 +32,28 @@ console.log(myFile.a.c); // undefined
 ## A more controlled example
 <!--INJECT ./docs/detailed.js-->
 ```js
-const Dej = require(`dead-easy-json`)(__dirname); // There are "hacky" ways to get the caller file but I'm not risking it
-const { file: myFile, writeAwait } = Dej.require(`./myJson.json`, {}, {
+const Dej = require(`dead-easy-json`)(); // dirname is optional if you use absolute paths when requiring
+const handler = Dej.require(`${__dirname}/myJson.json`, {}, {
   writeInterval: 100, // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
 
   // Options for JSON.stringify
   replacer: null,
   space: 2,
 });
-// The config is accessible by .config if you really need to edit it
+const { file: myFile, writeAwait } = handler;
 
-// write() // This invokes the synchronous write() function
-// await writeAsync() // This invokes the write() function as a Promise
 myFile.a = [1,2,3];
 
 console.log(myFile.a); // undefined
 // This obviously should be inside an async function
 await writeAwait; //  type: ignore
 console.log(myFile.a); // [1, 2, 3]
+
+// You can also immediately write the file
+handler.write();
+
+// and asynchronously write the file as well
+await handler.writeAsync();
 
 ```
 <!--END ./docs/detailed.js-->
