@@ -2,8 +2,12 @@
 const DejFunc =  require(`../src/index.js`);
 const Dej = DejFunc(__dirname);
 const fs = require(`fs`);
+const chai = require(`chai`);
+chai.use(require(`chai-as-promised`));
 // eslint-disable-next-line no-unused-vars
-const {expect, assert } = require(`chai`);
+const {expect, assert } = chai;
+
+const sleep = t => new Promise(r => setTimeout(r, t));
 
 const filePath = `${__dirname}/file.json`;
 describe(`Main - Blank file each time`, function() {
@@ -38,6 +42,11 @@ describe(`Main - Blank file each time`, function() {
   });
   it(`Should give a helpful message when invoked without dirname`, function() {
     expect(DejFunc.require).to.throw(/forg[eo]t/i);
+  });
+  it(`Should give a helpful message await was called with no write interval set`, async function() {
+    const Dej = DejFunc(__dirname);
+    const handler = Dej.require(`./file.json`, {});
+    await expect(handler.writeAwait).to.be.rejectedWith(/awaited/i);
   });
   it(`Should not allow a relative import with no dirname`, function() {
     expect(() => {
@@ -105,6 +114,14 @@ describe(`Main - Blank file each time`, function() {
       await req.writeAwait;
 
       expect(fileAsJson()).to.deep.equal({a: 1});
+    });
+    it(`Should return a resolved promise if there is no queue`, async function(res, rej) {
+      this.slow(500);
+      const DejAsync = DejFunc(__dirname);
+      const req = DejAsync.require(`file.json`, {}, {writeInterval: 100});
+      // Now, this should be a race
+      req.writeAwait.then(res());
+      sleep(50).then(() => rej(new Error(`writeAwait was not resolved in time`)));
     });
     it(`Should stack the writes when there are multiple requests`, async function() {
       this.slow(500);
