@@ -51,7 +51,6 @@ class ProxyJson {
       this.scheduleWrite();
       return ret;
     };
-    this.writeAwait = this.config.writeInterval === null ? Promise.reject(new Error(`Awaited a write when writeInterval was not set`)) : Promise.resolve();
     this.writeTimer = null;
     const m = this;
     const handler = {
@@ -154,19 +153,15 @@ class ProxyJson {
     }
     this.write();
   }
-  // get file() {
-  //   if (!this._file) {
-  //     this._file = this.config.defaultObject;
-
-  //   }
-  //   return this._file;
-  // }
+  get writeAwait() {
+    return this.config.writeInterval ? (this.writeTimer ? this._writeAwait : Promise.resolve()) : Promise.reject(new Error(`Awaited a write when writeInterval was not set`));
+  }
   scheduleWrite() {
     if (this.config.writeInterval) {
       if (this.writeTimer) {
         return this.writeAwait; // Don't do anything
       }
-      return this.writeAwait = new Promise(resolve => {
+      return this._writeAwait = new Promise(resolve => {
         this.writeTimer = setTimeout(
           () => {this.writeTimer = null; this.write(); resolve();},
           this.config.writeInterval
@@ -179,6 +174,8 @@ class ProxyJson {
    * Void
    */
   write() {
+    clearTimeout(this.writeTimer);
+    this.writeTimer = null;
     fs.writeFileSync(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space));
   }
   /**
@@ -203,8 +200,9 @@ const DeadEasyJson = function(dirname = undefined) {
       if (dirname === undefined) {
         throw new Error(`Cannot require ${file} without a directory (make sure you passed __dirname to the constructor)`);
       }
+      return new ProxyJson(path.join(dirname, file), defaultObj, config);
     }
-    return new ProxyJson(path.join(dirname, file), defaultObj, config);
+    return new ProxyJson(file, defaultObj, config);
   }
   };
 };
