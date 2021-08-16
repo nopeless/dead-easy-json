@@ -7,7 +7,8 @@ module.exports = {
     "sourceType": `module`,
     "ecmaVersion": 2020
   },
-
+  // ignore certain files
+  "ignorePatterns": [`docs/**/*.js`],
   "extends": `eslint:recommended`,
   "rules": {
     "quotes": [1, `backtick`],
