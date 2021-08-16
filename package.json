@@ -21,7 +21,19 @@
     "type": "git",
     "url": "git+https://github.com/nopeless/dead-easy-json.git"
   },
-  "keywords": ["eaiest", "db", "no", "config", "easy", "json", "file", "database", "sync", "async", "prototype"],
+  "keywords": [
+    "eaiest",
+    "db",
+    "no",
+    "config",
+    "easy",
+    "json",
+    "file",
+    "database",
+    "sync",
+    "async",
+    "prototype"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -30,6 +42,7 @@
   "homepage": "https://github.com/nopeless/dead-easy-json#readme",
   "devDependencies": {
     "chai": "*",
+    "chai-as-promised": "^7.1.1",
     "coveralls": "^3.1.1",
     "dead-easy-json": "^1.1.0",
     "eslint": "^7.32.0",
