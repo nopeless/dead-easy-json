@@ -12,6 +12,7 @@ describe(`Scripts in docs`, function () {
   for (const [fileDesc, fileName] of files) {
     describe(`'${fileDesc}' in 'docs'`, function () {
       it(`Should not error`, async function () {
+        this.slow(500);
         // I'm gonna do whats called a pro gamer move
         let file = fs.readFileSync(path.join(__dirname, `../docs/${fileName}`)).toString();
         let p;
