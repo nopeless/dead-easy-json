@@ -1,0 +1,1 @@
+make sure you install dead-easy-json when running tests (--no-save)
