@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "__comment": "some of these are broken. use at your own risk",
-    "test:watch": "mocha --watch-ignore [\".json\"] --watch 'src/**/*.js' 'test/**/*.spec.js' --bail",
+    "test:watch": "mocha --watch --watch-ignore [\"*.json\",\"node_modules\",\".git\"] --bail ./test/**/*.spec.js",
     "test:one": "npm run test:watch -- --grep",
     "test:coverage": "nyc --reporter=text npm run test",
     "test:html": "nyc --reporter=html npm run test",
