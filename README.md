@@ -40,13 +40,13 @@ const handler = Dej.require(`${__dirname}/myJson.json`, {}, {
   replacer: null,
   space: 2,
 });
-const { file: myFile, writeAwait } = handler;
+const { file: myFile } = handler;
 
 myFile.a = [1,2,3];
 
 console.log(myFile.a); // undefined
 // This obviously should be inside an async function
-await writeAwait; //  type: ignore
+await handler.writeAwait; //  type: ignore
 console.log(myFile.a); // [1, 2, 3]
 
 // You can also immediately write the file
