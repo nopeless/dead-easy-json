@@ -5,6 +5,9 @@ const path = require(`path`);
 const {expect, assert } = require(`chai`);
 
 describe(`Scripts in docs`, function () {
+  beforeEach(function () {
+    fs.writeFileSync(`${__dirname}/myJson.json`, ``);
+  });
   const files = [
     [`Quickstart`, `quickstart.js`],
     [`A more controlled example`, `detailed.js`]
