@@ -1,4 +1,4 @@
-const Dej = new require(`dead-easy-json`)(__dirname);
+const Dej = require(`dead-easy-json`)(__dirname);
 const { file: myFile } = Dej.require(`./myJson.json`);
 // // myFile = {} This is implied! You can override this behavior in config
 // myFile.a.b = 3; // ERROR; because a is undefined
