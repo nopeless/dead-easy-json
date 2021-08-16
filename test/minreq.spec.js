@@ -21,6 +21,7 @@ describe(`Scripts in docs`, function () {
         let p;
         // remove console log file
         file = file.replace(/console\.log/g, ``);
+        file = file.replace(/dead-easy-json/g, `../src/index.js`);
         const code = `p = (async () => {\n${file}\n})().then(() => true).catch(e => {console.log(e); return false})`;
         eval(code);
         const res = await p;
