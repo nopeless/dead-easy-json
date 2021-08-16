@@ -1,0 +1,22 @@
+name: Inject readme
+on: ["push", "pull_request"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.5.0
+
+      - name: npm stuff
+        run: npm ci
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update readme to match docs
+          add_options: '-u'
+          commit_options: --no-verify
