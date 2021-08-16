@@ -16,4 +16,3 @@ console.log(myFile.a); // undefined
 // This obviously should be inside an async function
 await writeAwait; //  type: ignore
 console.log(myFile.a); // [1, 2, 3]
-

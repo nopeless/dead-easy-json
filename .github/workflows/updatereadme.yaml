@@ -11,9 +11,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 15.5.0
-
-      - name: npm stuff
-        run: npm ci
+      - name: run the code
+        run: npm run updatereadme
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:

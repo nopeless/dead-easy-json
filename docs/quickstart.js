@@ -11,7 +11,6 @@ myFile.a.b = 3; // Ok; written to file system SYNCHRONOUSLY by default
 // 	}
 // }
 // */
-`test`;
 console.log(myFile.a.b); // 3
 console.log(myFile.a.c); // undefined
 // console.log(myFile.d.e); // ERROR

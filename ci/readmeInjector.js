@@ -9,7 +9,8 @@ readme = readme.replace(re, m => {
   m = m.match(renog);
   const filename = m[1];
   const file = fs.readFileSync(filename);
-  return `\`\`\`js\n${file}\`\`\``;
+  console.log(`successfully replaced content ${filename}`);
+  return `<!--INJECT ${filename}-->\n\`\`\`js\n${file}\n\`\`\`\n<!--END ${filename}-->`;
 });
 
 fs.writeFileSync(`README.md`, readme);
