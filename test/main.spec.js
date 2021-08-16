@@ -115,13 +115,16 @@ describe(`Main - Blank file each time`, function() {
 
       expect(fileAsJson()).to.deep.equal({a: 1});
     });
-    it(`Should return a resolved promise if there is no queue`, async function(res, rej) {
-      this.slow(500);
-      const DejAsync = DejFunc(__dirname);
-      const req = DejAsync.require(`file.json`, {}, {writeInterval: 100});
-      // Now, this should be a race
-      req.writeAwait.then(res());
-      sleep(50).then(() => rej(new Error(`writeAwait was not resolved in time`)));
+    it(`Should return a resolved promise if there is no queue`, function() {
+      return new Promise((res, rej) => {
+        this.slow(500);
+        const DejAsync = DejFunc(__dirname);
+        const req = DejAsync.require(`file.json`, {}, {writeInterval: 100});
+        // Now, this should be a race
+        const a = req.writeAwait;
+        a.then(res);
+        sleep(50).then(() => rej(new Error(`writeAwait was not resolved in time`)));
+      });
     });
     it(`Should stack the writes when there are multiple requests`, async function() {
       this.slow(500);
