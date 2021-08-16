@@ -7,38 +7,45 @@ The goal is to make a plug-and-play type of package that is used for small proje
 
 ## Quickstart
 ```js
-const Dej = new require('dead-easy-json')(__dirname);
-const { file: myFile } = Dej.require('./yourjsonfile');
-myFile.a.b = 3; // ERROR
-// myFile = {} This is implied! You can override this behavior in config
+const Dej = new require(`dead-easy-json`)(__dirname);
+const { file: myFile } = Dej.require(`./myJson.json`);
+// // myFile = {} This is implied! You can override this behavior in config
+// myFile.a.b = 3; // ERROR; because a is undefined
 myFile.a = {};  // Ok; written to file system SYNCHRONOUSLY by default
 myFile.a.b = 3; // Ok; written to file system SYNCHRONOUSLY by default
-/*
-{
-	a: {
-		b: 3
-	}
-}
-*/
+// /*
+// {
+// 	a: {
+// 		b: 3
+// 	}
+// }
+// */
+`test`;
 console.log(myFile.a.b); // 3
 console.log(myFile.a.c); // undefined
-console.log(myFile.d.e); // ERROR
-```
+// console.log(myFile.d.e); // ERROR```
 
 ## A more controlled example
 ```js
-const Dej = new require('dead-easy-json')(__dirname); // There are "hacky" ways to get the caller file but I'm not risking it
-const { file: myFile, write, writeAsync } = Dej.require('./yourjsonfile', {}, {
-	writeInterval = 1000; // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
-	
-	// Options for JSON.stringify
-	replacer: null,
-	space: 2,
+const Dej = new require(`dead-easy-json`)(__dirname); // There are "hacky" ways to get the caller file but I'm not risking it
+const { file: myFile, write, writeAsync } = Dej.require(`./yourjsonfile`, {}, {
+  writeInterval: 1000, // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
+
+  // Options for JSON.stringify
+  replacer: null,
+  space: 2,
 });
 // The config is accessible by .config if you really need to edit it
 
 // write() // This invokes the synchronous write() function
 // await writeAsync() // This invokes the write() function as a Promise
+myFile.a = [1,2,3]
+
+console.log(myFile.a) // undefined
+// This obviously should be inside an async function
+await writeAsync() //  type: ignore
+console.log(myFile.a) // [1, 2, 3]
+
 ```
 
 ## How `writeInterval` works
