@@ -13,6 +13,29 @@ describe(`Main - Blank file each time`, function() {
   beforeEach(function() {
     fs.writeFileSync(filePath, ``);
   });
+  after(function() {
+  // Recursively check if any of the test failed
+    let topParent = this.test;
+    while (topParent.parent) topParent = topParent.parent;
+    function isFailed(suite) {
+    // Suites are recursive
+      for(const s of suite.suites) {
+        if (isFailed(s)) return true;
+      }
+      // Tests are not
+      for (const test of suite.tests) {
+        if (test.state === `failed`) return true;
+      }
+      return false;
+    }
+    const failed = isFailed(topParent);
+    if (failed) {
+      console.log(` [FAIL] Test failed. Click here to see last state(make sure --bail is on) ${filePath}`);
+    } else {
+      console.log(` [OK] Tests passed (file is deleted)`);
+      fs.unlinkSync(filePath);
+    }
+  });
   it(`Should give a helpful message when invoked without dirname`, function() {
     expect(DejFunc.require).to.throw(/forg[eo]t/i);
   });
@@ -236,27 +259,4 @@ describe(`Main - Blank file each time`, function() {
     //   expect(() => {this.file.func.apply(null, []);}).to.throw(/not support|use.+instead/i);
     // });
   });
-});
-after(function() {
-  // Recursively check if any of the test failed
-  let topParent = this.test;
-  while (topParent.parent) topParent = topParent.parent;
-  function isFailed(suite) {
-    // Suites are recursive
-    for(const s of suite.suites) {
-      if (isFailed(s)) return true;
-    }
-    // Tests are not
-    for (const test of suite.tests) {
-      if (test.state === `failed`) return true;
-    }
-    return false;
-  }
-  const failed = isFailed(topParent);
-  if (failed) {
-    console.log(` [FAIL] Test failed. Click here to see last state(make sure --bail is on) ${filePath}`);
-  } else {
-    console.log(` [OK] Tests passed (file is deleted)`);
-    fs.unlinkSync(filePath);
-  }
 });
