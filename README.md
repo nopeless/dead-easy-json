@@ -8,7 +8,7 @@ The goal is to make a plug-and-play type of package that is used for small proje
 ## Quickstart
 <!--INJECT ./docs/quickstart.js-->
 ```js
-const Dej = new require(`dead-easy-json`)(__dirname);
+const Dej = require(`dead-easy-json`)(__dirname);
 const { file: myFile } = Dej.require(`./myJson.json`);
 // // myFile = {} This is implied! You can override this behavior in config
 // myFile.a.b = 3; // ERROR; because a is undefined
@@ -31,7 +31,7 @@ console.log(myFile.a.c); // undefined
 ## A more controlled example
 <!--INJECT ./docs/detailed.js-->
 ```js
-const Dej = new require(`dead-easy-json`)(__dirname); // There are "hacky" ways to get the caller file but I'm not risking it
+const Dej = require(`dead-easy-json`)(__dirname); // There are "hacky" ways to get the caller file but I'm not risking it
 const { file: myFile, writeAwait } = Dej.require(`./myJson.json`, {}, {
   writeInterval: 100, // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
 
