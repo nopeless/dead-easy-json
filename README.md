@@ -73,13 +73,13 @@ else:
 
 - Default objs can be nested, but they are written in sync regardless of `writeInterval`.
 
- - The presense of `writeInterval` determines which type of proxy is returned. Therefore, if you want to use a writeInterval, set it to a defined value (like 0). Defaults to null
-
  - Even if there is a `writeInterval` the variable is immediately accessible. Its just written in memory before disk
 
  - The reader will rewrite the file when initially loaded if it was an invalid read ex) ``. For example, a blank file will be {} apon constructing the object. This is done SYNCHRONOUSLY
 
  - Setting the `.file` to a new object will invoke another proxy. This will ALWAYS rewrite the file synchronously (note: this was a design choice because it just feels weird) (must be like `myObj.file = {}` not `file = {}` <- this will not invoke the new proxy)
+
+ - Watch writes to the json variable. This also resets the write timer which will cancel all pending operations. This seemed like a better idea than to deal with object merge conflicts
 
 ## Donations
 Has this project reduced 20 minutes of your dev time?  
