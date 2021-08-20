@@ -144,9 +144,9 @@ class ProxyJson {
     }
     this.file = this.internalSave;
     if (rewrite) this.write();
-    this._resetWrite();
 
-    this.onFileSaveError = console.error;
+    // istanbul ignore next
+    this.onFileSaveError = (...args) => console.error(`onFileSaveError`, ...args);
 
     function getJson() {
       let content;
@@ -154,9 +154,12 @@ class ProxyJson {
         content = fs.readFileSync(dir).toString();
         return JSON.parse(content);
       } catch (e) {
-        if (e.__proto__.name===`SyntaxError`) {
+        // Please do a pr if there are other errors
+        // istanbul ignore next
+        if (e.__proto__.name === `SyntaxError`) {
           throw new Error(`The JSON file you saved is invalid! Discarding changes. content=${content}`);
         }
+        // istanbul ignore next
         throw e;
       }
     }
@@ -165,12 +168,9 @@ class ProxyJson {
       this.watchCallback = () => {};
       const watcher = chokidar.watch(this.dir);
       watcher.on(`change`, (_, stats) => {
-        console.log(1);
         if (this.writing) return;
-        console.log(2, stats.mtimeMs - this.lastWrite);
         // Sync check
-        // if (stats.mtimeMs - this.lastWrite < 1) return;
-        console.log(3);
+        if (stats.mtimeMs - this.lastWrite < 20) return;
 
         this._resetWrite();
         try {
@@ -178,7 +178,6 @@ class ProxyJson {
         } catch (e) {
           this.onFileSaveError(e);
         }
-        console.log(`called`);
         this.watchCallback();
       });
       this.close = () => watcher.close();
@@ -213,7 +212,10 @@ class ProxyJson {
       }
       return this._writeAwait = new Promise(resolve => {
         this.writeTimer = setTimeout(
-          async () => {this.writeTimer = null; await this.writeAsync(); resolve();},
+          async () => {
+            await this.writeAsync();
+            this.writeTimer = null;
+            resolve();},
           this.config.writeInterval
         );}
       );
@@ -224,11 +226,13 @@ class ProxyJson {
     this.lastWrite = Date.now();
     clearTimeout(this.writeTimer);
     this.writeTimer = null;
+    this.writing = false;
   }
   /**
    * Void
    */
   write() {
+    this.writing = true;
     fs.writeFileSync(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space));
     this._resetWrite();
   }
@@ -238,19 +242,17 @@ class ProxyJson {
   async writeAsync() {
     return new Promise((resolve, reject) => {
       try {
-        this._resetWrite();
         this.writing = true;
         fs.promises.writeFile(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space))
           .then(resolve)
           .finally(() => {
-            this.writing = false;
+            this._resetWrite();
           });
       }
       catch (e) {
         /* istanbul ignore next */
         reject(e);
       }
-      resolve();
     });
   }
 }
