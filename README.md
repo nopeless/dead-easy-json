@@ -60,13 +60,34 @@ await handler.writeAsync();
 
 ## How `writeInterval` works
 
+The changes are queued for the next `writeInterval` ms and then the callback is called
+
+## Specifications
+
+All the properties of the main `file` proxy is a proxy itself as well
+```js
+const { file } = require(`dead-easy-json`)().require(``);
+file.property = {} // Written in disk
+const prop = file.property;
+prop.a = 42 // Also written in disk
+
+// This is a no brainer but rewriting the property itself doesn't work
+let prop = file.property;
+prop = 3 // This just sets prop to a new reference
 ```
-set() is called
-if a previous timeout is present:
- modifiy the object and return the write callback
-else:
- a timeout is made with callback:
-  call write
+
+When saving the json file, all references are PRESERVED
+```js
+const prop = file.property
+setTimeout(() => {
+  console.log(prop.a) // prints 42; reference is PRESERVED
+}, 10000)
+// Save the file to be
+/*
+{
+  "property": { "a": 42 }
+}
+*/
 ```
 
 ## Some gatchas
