@@ -173,11 +173,9 @@ class ProxyJson {
           this.onFileSaveError(e);
         }
       });
-      // This might be a bad idea
       [`SIGINT`, `SIGTERM`, `SIGQUIT`]
         .forEach(signal => process.on(signal, async () => {
           await watcher.close();
-          process.exit(0);
         }));
     }
   }
