@@ -57,7 +57,7 @@ describe(`Util functions`, function () {
     });
   });
   describe(`overwriteObject()`, function () {
-    it(`Should not overwrite references`, function () {
+    it(`Should persist references`, function () {
       const obj = {
         a: `a`,
         b: `b`,
@@ -83,6 +83,35 @@ describe(`Util functions`, function () {
       expect(newObj).to.deep.equal(newObjCopy);
       // The reference should not have changed
       expect(obj.d).to.equal(propertyD);
+    });
+    it(`Should not allow [] to {}`, function () {
+      const obj = {
+        a: []
+      };
+      const newObj = {
+        a: {}
+      };
+      expect(() => overwriteObject(obj, newObj)).to.throw(/not compatible/i);
+    });
+    it(`Should not allow {} to []`, function () {
+      const obj = {
+        a: {}
+      };
+      const newObj = {
+        a: []
+      };
+      expect(() => overwriteObject(obj, newObj)).to.throw(/not compatible/i);
+    });
+    it(`Should properly reindex arrays without losing reference`, function () {
+      const obj = {
+        a: [2,3,4,5,6]
+      };
+      const newObj = {
+        a: [1,2,3]
+      };
+      const ref = obj.a;
+      overwriteObject(obj, newObj);
+      expect(ref).to.deep.equal([1,2,3]);
     });
   });
 });

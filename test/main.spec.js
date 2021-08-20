@@ -7,11 +7,6 @@ chai.use(require(`chai-as-promised`));
 // eslint-disable-next-line no-unused-vars
 const {expect, assert } = chai;
 
-after(async function () {
-  console.log(`closing chokidar`);
-  process.emit(`SIGINT`);
-});
-
 const sleep = t => new Promise(r => setTimeout(r, t));
 
 const filePath = `${__dirname}/file.json`;
@@ -64,6 +59,11 @@ describe(`Main - Blank file each time`, function() {
       const Dej = DejFunc();
       Dej.require(require(`path`).join(__dirname, `./file.json`));
     }).to.not.throw(/can't|cannot/i);
+  });
+  it(`Should allow close even with no watch option (coverage)`, function() {
+    const Dej = DejFunc(__dirname);
+    const handler = Dej.require(`./file.json`, {});
+    handler.close();
   });
   it(`Should not allow unrecognized config entry`, function() {
     expect(() => {
@@ -240,11 +240,47 @@ describe(`Main - Blank file each time`, function() {
     });
   });
   describe(`Watching for changes`, function() {
-    before(function() {
+    this.slow(1000);
+    before(async function() {
       fs.writeFileSync(filePath, ``);
-      this.dej = Dej.require(filePath, {});
+      this.dej = Dej.require(filePath, {}, {watch: true});
       const file = this.dej.file;
       this.file = file;
+      this.awaitWrite = async function (content) {
+        await sleep(100); // this is because of chokidar default interval is 100
+        const p = new Promise(resolve => {
+          this.dej.watchCallback = resolve;
+        });
+        fs.writeFileSync(filePath, content);
+        await p;
+      };
+    });
+    after(async function() {
+      await this.dej.close();
+    });
+    it(`Should allow direct call of watch callback (coverage)`, function () {
+      this.dej.watchCallback();
+    });
+    it(`Should be able to watch for changes`, async function() {
+      await this.awaitWrite(`{"a":{"b":3}}`);
+      expect(this.file).to.deep.equal({a:{b:3}});
+    });
+    it(`Should have a 5ms cooldown (coverage test)`, async function() {
+      fs.writeFileSync(filePath, `{"a":{"b":3}}`);
+      this.dej.writing = false; // Force overwrite
+      fs.writeFileSync(filePath, `{"a":{"b":3}}`);
+    });
+    it(`Should persist in reference`, async function() {
+      const ref = this.file.a;
+      await this.awaitWrite(`{"a":{"b":4}}`);
+      expect(ref.b).to.equal(4);
+    });
+    it(`Should error if file is invalid`, async function() {
+      // This should console.error by default, but we override it
+      return new Promise(resolve => {
+        this.dej.onFileSaveError = resolve;
+        this.awaitWrite(`{"a`);
+      });
     });
   });
   describe(`Misc functions`, function() {
@@ -294,5 +330,8 @@ describe(`Main - Blank file each time`, function() {
     //   console.log(this.file);
     //   expect(() => {this.file.func.apply(null, []);}).to.throw(/not support|use.+instead/i);
     // });
+    it(`Writing non-negative values to Array should not be allowed`, function() {
+      expect(() => {this.file.arr.a = 42;}).to.throw(/non-negative/i);
+    });
   });
 });
