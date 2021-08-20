@@ -90,6 +90,24 @@ setTimeout(() => {
 */
 ```
 
+When saving the json file, type `{}` should be matched with type `{}` and `[]` with `[]`
+```js
+
+file.property = {}
+// Save the file to be
+/*
+{
+  "property": []
+}
+*/
+// ^ ERROR because the reference preservation system forbids this
+// Also I do NOT see any reason for anyone to use [] and {} interchangably
+
+// Doing
+file.property = [] 
+// In the code however, is allowed
+```
+
 ## Some gatchas
 
 - Default objs can be nested, but they are written in sync regardless of `writeInterval`.
