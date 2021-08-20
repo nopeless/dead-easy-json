@@ -58,7 +58,8 @@ describe(`Main - Blank file each time`, function() {
       const Dej = DejFunc();
       Dej.require(`./file.json`);
     }).to.throw(/can't|cannot/i);
-  });  it(`Should allow an absolute import with no dirname`, function() {
+  });
+  it(`Should allow an absolute import with no dirname`, function() {
     expect(() => {
       const Dej = DejFunc();
       Dej.require(require(`path`).join(__dirname, `./file.json`));
@@ -101,18 +102,18 @@ describe(`Main - Blank file each time`, function() {
     expect(() => Dej.require(`./file.json`, 3)).to.throw(/type/i);
   });
   it(`A blank file should be {} by default`, function() {
-    Dej.require(`file.json`);
+    Dej.require(filePath);
     expect(fileAsJson()).to.deep.equal({});
   });
   it(`Should be a custom Object if set`, function() {
-    Dej.require(`file.json`, []);
+    Dej.require(filePath, []);
     expect(fileAsJson()).to.deep.equal([]);
   });
   describe(`Async interval`, function() {
     it(`Should write the function after some time`, async function() {
       this.slow(500);
       const DejAsync = DejFunc(__dirname);
-      const req = DejAsync.require(`file.json`, {}, {writeInterval: 100});
+      const req = DejAsync.require(filePath, {}, {writeInterval: 100});
       const f = req.file;
       f.a = 1;
       expect(fileAsJson()).to.deep.equal({});
@@ -124,7 +125,7 @@ describe(`Main - Blank file each time`, function() {
       return new Promise((res, rej) => {
         this.slow(500);
         const DejAsync = DejFunc(__dirname);
-        const req = DejAsync.require(`file.json`, {}, {writeInterval: 100});
+        const req = DejAsync.require(filePath, {}, {writeInterval: 100});
         // Now, this should be a race
         const a = req.writeAwait;
         a.then(res);
@@ -134,7 +135,7 @@ describe(`Main - Blank file each time`, function() {
     it(`Should stack the writes when there are multiple requests`, async function() {
       this.slow(500);
       const DejAsync = DejFunc(__dirname);
-      const req = DejAsync.require(`file.json`, [], {writeInterval: 100});
+      const req = DejAsync.require(filePath, [], {writeInterval: 100});
       const f = req.file;
       // loop a thousand times
       // This is normally not a good idea when stuff is synchronous, but its allowed here
@@ -149,7 +150,7 @@ describe(`Main - Blank file each time`, function() {
   describe(`Array manipulation`, function() {
     before(function() {
       fs.writeFileSync(filePath, ``);
-      this.dej = Dej.require(`file.json`, []);
+      this.dej = Dej.require(filePath, []);
       const file = this.dej.file;
       this.file = file;
     });
@@ -181,7 +182,7 @@ describe(`Main - Blank file each time`, function() {
   describe(`Object manipulation` , function() {
     before(function() {
       fs.writeFileSync(filePath, ``);
-      this.dej = Dej.require(`file.json`, {});
+      this.dej = Dej.require(filePath, {});
       const file = this.dej.file;
       this.file = file;
     });
@@ -238,6 +239,14 @@ describe(`Main - Blank file each time`, function() {
       expect(() => Object.isExtensible(this.file.a)).to.not.throw();
     });
   });
+  describe(`Watching for changes`, function() {
+    before(function() {
+      fs.writeFileSync(filePath, ``);
+      this.dej = Dej.require(filePath, {});
+      const file = this.dej.file;
+      this.file = file;
+    });
+  });
   describe(`Misc functions`, function() {
     before(function() {
       fs.writeFileSync(filePath, ``);
@@ -246,7 +255,7 @@ describe(`Main - Blank file each time`, function() {
         }
       }
       this.c = c;
-      const {file} =  Dej.require(`file.json`, {
+      const {file} =  Dej.require(filePath, {
         arr: [1,2,3],
         obj: {a: 1, b: 2, c: 3},
         // func: () => {},
