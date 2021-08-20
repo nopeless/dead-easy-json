@@ -3,6 +3,10 @@
 ![ci badge](https://github.com/nopeless/dead-easy-json/actions/workflows/ci.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nopeless/dead-easy-json/badge.svg?branch=main)](https://coveralls.io/github/nopeless/dead-easy-json?branch=main)
 
+  
+
+[![NPM](https://nodei.co/npm/dead-easy-json.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dead-easy-json/)
+
 The goal is to make a plug-and-play type of package that is used for small projects
 
 ## Quickstart
