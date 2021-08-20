@@ -143,40 +143,47 @@ class ProxyJson {
       };
     }
     this.file = this.internalSave;
-    this._resetWrite();
     if (rewrite) this.write();
+    this._resetWrite();
 
     this.onFileSaveError = console.error;
 
     function getJson() {
+      let content;
       try {
-        return JSON.parse(fs.readFileSync(dir).toString());
+        content = fs.readFileSync(dir).toString();
+        return JSON.parse(content);
       } catch (e) {
         if (e.__proto__.name===`SyntaxError`) {
-          throw new Error(`The JSON file you saved is invalid! Discarding changes`);
+          throw new Error(`The JSON file you saved is invalid! Discarding changes. content=${content}`);
         }
         throw e;
       }
     }
     if (this.config.watch) {
       // Spawn a watcher
+      this.watchCallback = () => {};
       const watcher = chokidar.watch(this.dir);
       watcher.on(`change`, (_, stats) => {
+        console.log(1);
         if (this.writing) return;
+        console.log(2, stats.mtimeMs - this.lastWrite);
         // Sync check
-        if (stats.mtimeMs - this.lastWrite < 1) return;
-        console.log(`writing`);
+        // if (stats.mtimeMs - this.lastWrite < 1) return;
+        console.log(3);
+
         this._resetWrite();
         try {
           overwriteObject(this.file, getJson());
         } catch (e) {
           this.onFileSaveError(e);
         }
+        console.log(`called`);
+        this.watchCallback();
       });
-      [`SIGINT`, `SIGTERM`, `SIGQUIT`]
-        .forEach(signal => process.on(signal, async () => {
-          await watcher.close();
-        }));
+      this.close = () => watcher.close();
+    } else {
+      this.close = () => {};
     }
   }
   get file() {
