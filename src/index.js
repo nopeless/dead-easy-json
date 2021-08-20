@@ -170,12 +170,15 @@ class ProxyJson {
     }
     this.write();
   }
+  _resetWrite() {
+    clearTimeout(this.writeTimer);
+    this.writeTimer = null;
+  }
   /**
    * Void
    */
   write() {
-    clearTimeout(this.writeTimer);
-    this.writeTimer = null;
+    this._resetWrite();
     fs.writeFileSync(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space));
   }
   /**
@@ -184,7 +187,8 @@ class ProxyJson {
   async writeAsync() {
     return new Promise((resolve, reject) => {
       try {
-        this.write();
+        this._resetWrite();
+        fs.promises.writeFile(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space)).then(resolve);
       }
       catch (e) {
         /* istanbul ignore next */
