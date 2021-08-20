@@ -2,6 +2,8 @@
 const path = require(`path`);
 const fs = require(`fs`);
 const isSerializable = require(`./util/isSerializable`);
+const overwriteObject = require(`./util/overwriteObject`);
+const chokidar = require(`chokidar`);
 class ProxyJson {
   /**
    * The no-interval version
@@ -31,11 +33,12 @@ class ProxyJson {
     }
     else rewrite = true;
     this.dir = dir;
-
+    this.writing = false;
     this.config = {
       replacer: null,
       space: 2,
       writeInterval: null,
+      watch: false,
     };
     for (const k of Object.keys(config)) {
       // eslint-disable-next-line no-prototype-builtins
@@ -51,7 +54,6 @@ class ProxyJson {
       this.scheduleWrite();
       return ret;
     };
-    this.writeTimer = null;
     const m = this;
     const handler = {
       // I decided to keep this interface primitive
@@ -98,6 +100,13 @@ class ProxyJson {
           throw new Error(`Not supported. Got type [${typeof value}]`);
         }
         function recursiveAssign(target, property, value) {
+          // Add helpful checks to see if target is Object or Array
+
+          if (Array.isArray(target)) {
+            if (!property.match(/^0|[1-9]\d*|length$/)) {
+              throw new Error(`Not supported. Array index must be an non-negative integer with no leading 0s. Got [${property}]`);
+            }
+          }
           if (!(typeof value === `object` && value !== null)) {
             return Reflect.set(target, property, value);
           }
@@ -134,7 +143,43 @@ class ProxyJson {
       };
     }
     this.file = this.internalSave;
+    this._resetWrite();
     if (rewrite) this.write();
+
+    this.onFileSaveError = console.error;
+
+    function getJson() {
+      try {
+        return JSON.parse(fs.readFileSync(dir).toString());
+      } catch (e) {
+        if (e.__proto__.name===`SyntaxError`) {
+          throw new Error(`The JSON file you saved is invalid! Discarding changes`);
+        }
+        throw e;
+      }
+    }
+    if (this.config.watch) {
+      // Spawn a watcher
+      const watcher = chokidar.watch(this.dir);
+      watcher.on(`change`, (_, stats) => {
+        if (this.writing) return;
+        // Sync check
+        if (stats.mtimeMs - this.lastWrite < 1) return;
+        console.log(`writing`);
+        this._resetWrite();
+        try {
+          overwriteObject(this.file, getJson());
+        } catch (e) {
+          this.onFileSaveError(e);
+        }
+      });
+      // This might be a bad idea
+      [`SIGINT`, `SIGTERM`, `SIGQUIT`]
+        .forEach(signal => process.on(signal, async () => {
+          await watcher.close();
+          process.exit(0);
+        }));
+    }
   }
   get file() {
     return this._file;
@@ -171,6 +216,7 @@ class ProxyJson {
     this.write();
   }
   _resetWrite() {
+    this.lastWrite = Date.now();
     clearTimeout(this.writeTimer);
     this.writeTimer = null;
   }
@@ -178,8 +224,8 @@ class ProxyJson {
    * Void
    */
   write() {
-    this._resetWrite();
     fs.writeFileSync(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space));
+    this._resetWrite();
   }
   /**
    * Void
@@ -188,7 +234,12 @@ class ProxyJson {
     return new Promise((resolve, reject) => {
       try {
         this._resetWrite();
-        fs.promises.writeFile(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space)).then(resolve);
+        this.writing = true;
+        fs.promises.writeFile(this.dir, JSON.stringify(this.file, this.config.replacer, this.config.space))
+          .then(resolve)
+          .finally(() => {
+            this.writing = false;
+          });
       }
       catch (e) {
         /* istanbul ignore next */
