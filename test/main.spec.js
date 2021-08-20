@@ -4,8 +4,7 @@ const Dej = DejFunc(__dirname);
 const fs = require(`fs`);
 const chai = require(`chai`);
 chai.use(require(`chai-as-promised`));
-// eslint-disable-next-line no-unused-vars
-const {expect, assert } = chai;
+const {expect } = chai;
 
 const sleep = t => new Promise(r => setTimeout(r, t));
 

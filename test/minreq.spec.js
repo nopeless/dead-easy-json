@@ -1,9 +1,8 @@
 'use strict';
 const fs = require(`fs`);
 const path = require(`path`);
-// eslint-disable-next-line no-unused-vars
 const chai = require(`chai`);
-const {expect, assert } = chai;
+const {expect } = chai;
 chai.use(require(`chai-as-promised`));
 
 describe(`Scripts in docs`, function () {
