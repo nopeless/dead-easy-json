@@ -226,6 +226,8 @@ describe(`Main - Blank file each time`, function() {
       expect(fileAsJson()[0]).to.deep.equal([10, 20]);
     });
     it(`Should support async write`, async function() {
+      this.dej.file = {};
+      this.file = this.dej.file;
       this.file.a = 10;
       await this.dej.writeAsync();
       expect(() => Object.isExtensible(this.file.a)).to.not.throw();
