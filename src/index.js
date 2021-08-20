@@ -213,7 +213,7 @@ class ProxyJson {
       }
       return this._writeAwait = new Promise(resolve => {
         this.writeTimer = setTimeout(
-          () => {this.writeTimer = null; this.write(); resolve();},
+          async () => {this.writeTimer = null; await this.writeAsync(); resolve();},
           this.config.writeInterval
         );}
       );
