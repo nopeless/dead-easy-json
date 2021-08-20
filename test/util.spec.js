@@ -1,5 +1,6 @@
 'use strict';
 const isSerializable = require(`../src/util/isSerializable`);
+const overwriteObject = require(`../src/util/overwriteObject`);
 const util = require(`util`);
 
 // eslint-disable-next-line no-unused-vars
@@ -53,6 +54,35 @@ describe(`Util functions`, function () {
           expect(isSerializable(s), log(`Object is`, s)).to.be.false;
         });
       }
+    });
+  });
+  describe(`overwriteObject()`, function () {
+    it(`Should not overwrite references`, function () {
+      const obj = {
+        a: `a`,
+        b: `b`,
+        c: `c`,
+        d: {
+          e: `e`
+        }
+      };
+      const newObj = {
+        a: `a`, // no change
+        // b: 2, deleted
+        c: `cc`, // changed
+        d: {
+          e: `ee` // changed
+        },
+        f: `f` // added
+      };
+      const newObjCopy = {
+        ...newObj,
+      };
+      const propertyD = obj.d;
+      overwriteObject(obj, newObj);
+      expect(newObj).to.deep.equal(newObjCopy);
+      // The reference should not have changed
+      expect(obj.d).to.equal(propertyD);
     });
   });
 });
