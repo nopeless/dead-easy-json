@@ -7,6 +7,11 @@ chai.use(require(`chai-as-promised`));
 // eslint-disable-next-line no-unused-vars
 const {expect, assert } = chai;
 
+after(async function () {
+  console.log(`closing chokidar`);
+  process.emit(`SIGINT`);
+});
+
 const sleep = t => new Promise(r => setTimeout(r, t));
 
 const filePath = `${__dirname}/file.json`;
