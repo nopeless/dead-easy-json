@@ -1,1 +1,1 @@
-make sure you install dead-easy-json when running tests (--no-save)
+Get-Content filenamehere -Wait -Tail 30
