@@ -26,5 +26,5 @@ await handler.writeAsync();
 
 // Taking a sub-property object is also supported
 myFile[1] = {}
-myObj = myFile[1]
-myObj.b = 2 // Written in disk
+const myObj = myFile[1]
+const myObj.b = 2 // Written in disk
