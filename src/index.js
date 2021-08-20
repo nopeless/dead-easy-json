@@ -15,6 +15,7 @@ class ProxyJson {
   constructor(dir, defaultObj = undefined, config) {
     const str = fs.readFileSync(dir).toString();
     let rewrite = false;
+    let readObj;
     if (str !== ``) {
       const o = JSON.parse(str);
       if (defaultObj !== undefined) {
@@ -26,7 +27,8 @@ class ProxyJson {
           throw new Error(`The type of both defaultObj and json should be an object`);
         }
       }
-      defaultObj = o;
+      defaultObj = o.constructor;
+      readObj = o;
     }
     if (defaultObj === undefined) {
       defaultObj = {};
@@ -136,9 +138,12 @@ class ProxyJson {
 
     // Is array or an object because of the check above
     if (Array.isArray(defaultObj)) {
-      this.internalSave = [...defaultObj];
+      readObj = readObj ?? [];
+      this.internalSave = [...readObj, ...defaultObj];
     } else {
+      readObj = readObj ?? {};
       this.internalSave = {
+        ...readObj,
         ...defaultObj
       };
     }

@@ -106,8 +106,13 @@ describe(`Main - Blank file each time`, function() {
     expect(fileAsJson()).to.deep.equal({});
   });
   it(`Should be a custom Object if set`, function() {
-    Dej.require(filePath, []);
-    expect(fileAsJson()).to.deep.equal([]);
+    Dej.require(filePath, [1]);
+    expect(fileAsJson()).to.deep.equal([1]);
+  });
+  it(`Should properly use custom Object`, function() {
+    const { file } = Dej.require(filePath, [[]]);
+    file[0].push(1);
+    expect(fileAsJson()).to.deep.equal([[1]]);
   });
   describe(`Async interval`, function() {
     it(`Should write the function after some time`, async function() {
