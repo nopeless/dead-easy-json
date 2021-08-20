@@ -177,7 +177,6 @@ class ProxyJson {
         // Sync check
         if (stats.mtimeMs - this.lastWrite < 20) return;
 
-        this._resetWrite();
         try {
           overwriteObject(this.file, getJson());
         } catch (e) {
