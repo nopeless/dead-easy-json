@@ -2,10 +2,13 @@
 
 ![ci badge](https://github.com/nopeless/dead-easy-json/actions/workflows/ci.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nopeless/dead-easy-json/badge.svg?branch=main)](https://coveralls.io/github/nopeless/dead-easy-json?branch=main)
+![Dev badge](https://img.shields.io/badge/Developing%20stage-BETA-ff69b4)
 
   
 
 [![NPM](https://nodei.co/npm/dead-easy-json.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dead-easy-json/)
+
+> Until `v2.0.0`, The package is in beta, which means design choices can change
 
 The goal is to make a plug-and-play type of package that is used for small projects
 
@@ -129,11 +132,11 @@ file.property = []
 
  - Even if there is a `writeInterval` the variable is immediately accessible. Its just written in memory before disk
 
- - The reader will rewrite the file when initially loaded if it was an invalid read ex) ``. For example, a blank file will be {} apon constructing the object. This is done SYNCHRONOUSLY
+ - The reader will rewrite the file when initially loaded if it is a blank file ex) `""`. If it is a blank, the file be `defaultObj` or `{}` apon constructing the proxy. This is done SYNCHRONOUSLY
 
- - Setting the `.file` to a new object will invoke another proxy. This will ALWAYS rewrite the file synchronously (note: this was a design choice because it just feels weird) (must be like `myObj.file = {}` not `file = {}` <- this will not invoke the new proxy)
+ - Setting the `.file` to a new object will invoke another proxy. This will ALWAYS rewrite the file synchronously (note: this was an elaborate design choice ) (must be like `myObj.file = {}` not `file = {}` <- this will not invoke the new proxy)
 
- - Watch writes to the json variable. This also resets the write timer which will cancel all pending operations. This seemed like a better idea than to deal with object merge conflicts
+ - Watch writes to the json variable. This will not reset the write timer
 
 ## Donations
 Has this project reduced 20 minutes of your dev time?  
