@@ -16,5 +16,7 @@ module.exports = {
     "indent": [`error`, 2],
     "no-trailing-spaces": [`error`, { "skipBlankLines": false }],
     "semi": [`error`, `always`],
+
+    "linebreak-style": [`error`, `unix`],
   }
 };
