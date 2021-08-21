@@ -4,3 +4,6 @@
 ci
 docs
 test
+
+.nyc_output
+coverage
