@@ -138,6 +138,8 @@ file.property = []
 
  - Watch writes to the json variable. This will not reset the write timer
 
+ - Because the reference is preserved, `myArray[3]` for example will point to the `[3]` when the file changes. If you do not want this behavior, do something like `const val = myArray[3]` then only use val.
+
 ## Donations
 Has this project reduced 20 minutes of your dev time?  
 Consider donating me $3 so I can feel better about making bloated packages
