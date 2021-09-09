@@ -15,7 +15,7 @@ try {
     execSync(`git tag -d ${version}`);
   }
   execSync(`git tag -a ${version} -m "npm version update to ${version}"`);
-  // execSync(`git push origin ${version}`);
+  execSync(`git push origin ${version}`);
 } catch (e) {
   // console.error(e.stdout.toString(), e.stderr.toString());
   throw 1;
