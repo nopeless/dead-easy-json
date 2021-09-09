@@ -58,19 +58,13 @@ class ProxyJson {
     };
     const m = this;
     const handler = {
-      // I decided to keep this interface primitive
-      // These function is fundamentally uncallable
-      // apply: function(...args) {
-      //   throw new Error(`Not supported. Arguments: ${args}`);
-      //   // return Reflect.apply(this, this.target, args);
-      // },
-      // construct: function(...args) {
-      //   return new Error(`Not supporetd. Arguments: ${args}`);
-      //   // return Reflect.construct(this, this.target, args);
-      // },
+      /**
+       * Fundamentally uncallable methods
+       * apply,
+       * construct
+       */
       defineProperty: function(...args) {
         throw new Error(`Use '=' instead. Arguments: ${args}`);
-        // return Reflect.defineProperty(this, this.target, args);
       },
       deleteProperty: function(target, property) {
         return thenWrite(Reflect.deleteProperty(target, property));
@@ -118,13 +112,6 @@ class ProxyJson {
           }
           return res;
         }
-        // const res = Reflect.set(target, property, value.constructor(),
-        //   (() => {
-        //     for (const [k, v] of Object.entries(value)) {
-        //       value.
-        //     }
-        //   })()
-        // ));
         const res = recursiveAssign(target, property, value);
         m.scheduleWrite();
         return res;
