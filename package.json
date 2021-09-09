@@ -1,6 +1,6 @@
 {
   "name": "dead-easy-json",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Dead-easy JSON serialization for JavaScript. Bidirectional object synchronizaiton with async support",
   "main": "src/index.js",
   "scripts": {
