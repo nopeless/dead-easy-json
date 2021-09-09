@@ -9,6 +9,7 @@ try {
   // tbf idk even why i made this
   const p = require(`../package.json`);
   const version = `v${p.version}`;
+  require(`./readmeInjector`);
   execSync(`npm run ci`);
   const tags = execSync(`git tag --points-at HEAD`).toString().split(`\n`);
   if (tags.includes(version)) {
