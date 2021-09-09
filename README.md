@@ -78,7 +78,8 @@ handler.close(); // MUST if watch: true
 
 ## How `writeInterval` works
 
-The changes are queued for the next `writeInterval` ms and then the callback is called
+The changes are queued for the next `writeInterval` ms and then the callback is called.
+This change listener does not check whether the properties are actually the same e.g) setting `a.b = 3` and then setting it to `a.b = 3`. Even though they are two same values, the file will still be written
 
 ## Specifications
 
