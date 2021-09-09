@@ -1,5 +1,7 @@
 const Dej = require(`dead-easy-json`)(); // dirname is optional if you use absolute paths when requiring
-const handler = Dej.require(`${__dirname}/myJson.json`, {}, {
+const handler = Dej.require(`${__dirname}/myJson.json`, 
+  {} //The default object. Can be set to {"ur property":{"values":[]}} or [1,{2:3}] for example.
+  , {
   writeInterval: 100, // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
 
   // Options for JSON.stringify
