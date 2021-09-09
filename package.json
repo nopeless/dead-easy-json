@@ -4,8 +4,8 @@
   "description": "Dead-easy JSON serialization for JavaScript. Bidirectional object synchronizaiton with async support",
   "main": "src/index.js",
   "scripts": {
+    "gitpub": "node ci/gitpublish.js",
     "test": "mocha",
-    "__comment": "some of these are broken. use at your own risk",
     "test:watch": "mocha --watch --watch-ignore [\"*.json\",\"node_modules\",\".git\"] --bail ./test/**/*.spec.js",
     "test:one": "npm run test:watch -- --grep",
     "test:coverage": "nyc --reporter=text npm run test",
