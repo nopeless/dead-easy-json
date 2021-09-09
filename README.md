@@ -1,5 +1,7 @@
 # JSON is easy
 
+## “Dead-easy JSON serialization for JavaScript. Bidirectional object synchronizaiton with async support„
+
 ![ci badge](https://github.com/nopeless/dead-easy-json/actions/workflows/ci.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nopeless/dead-easy-json/badge.svg?branch=main)](https://coveralls.io/github/nopeless/dead-easy-json?branch=main)
 ![Dev badge](https://img.shields.io/badge/Developing%20stage-BETA-ff69b4)
@@ -9,8 +11,6 @@
 [![NPM](https://nodei.co/npm/dead-easy-json.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dead-easy-json/)
 
 > Until `v2.0.0`, The package is in beta, which means design choices can change
-
-The goal is to make a plug-and-play type of package that is used for small projects
 
 ## Quickstart
 <!--INJECT ./docs/quickstart.js-->
