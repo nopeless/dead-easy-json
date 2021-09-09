@@ -329,11 +329,6 @@ describe(`Main - Blank file each time`, function() {
     it(`Accessing keys should be allowed`, function() {
       expect(() => {Object.keys(this.file.obj);}).to.not.throw();
     });
-    // TODO: fix this
-    it(`apply shouldn't be allowed`, function() {
-      console.log(this.file);
-      expect(() => {this.file.func.apply(null, []);}).to.throw(/not support|use.+instead/i);
-    });
     it(`Writing non-negative values to Array should not be allowed`, function() {
       expect(() => {this.file.arr.a = 42;}).to.throw(/non-negative/i);
     });
