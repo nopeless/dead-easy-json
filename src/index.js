@@ -28,11 +28,10 @@ class ProxyJson {
           throw new Error(`The type of both defaultObj and json should be an object`);
         }
       }
-      defaultObj = o.constructor;
       readObj = o;
     }
     if (defaultObj === undefined) {
-      defaultObj = {};
+      defaultObj = Array.isArray(readObj) ? [] : {};
     }
     else rewrite = true;
     this.dir = dir;
