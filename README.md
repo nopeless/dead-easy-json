@@ -15,8 +15,7 @@
 ## Quickstart
 <!--INJECT ./docs/quickstart.js-->
 ```js
-const Dej = require(`dead-easy-json`)(__dirname);
-const { file: myFile } = Dej.require(`./myJson.json`);
+const myFile = require(`dead-easy-json`)(`./myJson.json`).file;
 // // myFile = {} This is implied. You can override this behavior
 // myFile.a.b = 3; // ERROR; because a is undefined
 myFile.a = {};  // Ok; written to file system SYNCHRONOUSLY by default
@@ -39,8 +38,8 @@ console.log(myFile.a.c); // undefined
 ## A more controlled example
 <!--INJECT ./docs/detailed.js-->
 ```js
-const Dej = require(`dead-easy-json`)(); // dirname is optional if you use absolute paths when requiring
-const handler = Dej.require(`${__dirname}/myJson.json`, 
+const JSONrequire = require(`dead-easy-json`);
+const handler = JSONrequire(`${__dirname}/myJson.json`, 
   {} //The default object. Can be set to {"ur property":{"values":[]}} or [1,{2:3}] for example.
   , {
   writeInterval: 100, // When this value is set, the object tracks changes and writes those changes at once every interval. Don't worry, it doesn't write when there are no changes. Read # writeInterval section for more
