@@ -10,6 +10,10 @@
 
 [![NPM](https://nodei.co/npm/dead-easy-json.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dead-easy-json/)
 
+## Showcase
+
+![GIF](https://raw.githubusercontent.com/nopeless/dead-easy-json/main/showcase/video.gif)
+
 > `v2` should be the latest drastic change. `v2` is not compatible with `v1`
 
 ## Quickstart
