@@ -54,6 +54,8 @@ const handler = JSONrequire(`${__dirname}/myJson.json`,
 });
 const { file: myFile } = handler;
 
+handler.watchCallback = () => console.log("detected file change")
+
 myFile.a = [1,2,3];
 
 console.log(myFile.a); // undefined
