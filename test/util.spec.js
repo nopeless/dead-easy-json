@@ -2,6 +2,7 @@
 const isSerializable = require(`../src/util/isSerializable`);
 const overwriteObject = require(`../src/util/overwriteObject`);
 const util = require(`util`);
+const getCallerFileSpec = require(`./getCallerDir.resource.js`);
 
 // eslint-disable-next-line no-unused-vars
 const {expect, assert } = require(`chai`);
@@ -112,6 +113,11 @@ describe(`Util functions`, function () {
       const ref = obj.a;
       overwriteObject(obj, newObj);
       expect(ref).to.deep.equal([1,2,3]);
+    });
+  });
+  describe(`getCallerFile()`, function () {
+    it(`Should return the correct file`, function () {
+      expect(getCallerFileSpec() === __dirname).to.be.true;
     });
   });
 });
