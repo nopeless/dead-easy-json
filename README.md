@@ -87,7 +87,7 @@ This change listener does not check whether the properties are actually the same
 
 All the properties of the main `file` proxy is a proxy itself as well
 ```js
-const { file } = require(`dead-easy-json`)().require(``);
+const { file } = require(`dead-easy-json`)(`data.json`);
 file.property = {} // Written in disk
 const prop = file.property;
 prop.a = 42 // Also written in disk
