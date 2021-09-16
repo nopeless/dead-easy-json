@@ -1,7 +1,7 @@
 'use strict';
 // https://stackoverflow.com/questions/16697791/nodejs-get-filename-of-caller-function
 // Heavily modified
-const path = require('path');
+const path = require(`path`);
 
 function _getCallerDir(current) {
   if (!current) throw new Error(`current file path not provided`);
