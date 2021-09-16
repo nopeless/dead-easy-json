@@ -116,8 +116,11 @@ describe(`Util functions`, function () {
     });
   });
   describe(`getCallerFile()`, function () {
+    it(`Should error when current file is not set`, function () {
+      expect(getCallerFileSpec.current()).to.throw(/file/gi);
+    });
     it(`Should return the correct file`, function () {
-      expect(getCallerFileSpec() === __dirname).to.be.true;
+      expect(getCallerFileSpec.correct() === __dirname).to.be.true;
     });
   });
 });

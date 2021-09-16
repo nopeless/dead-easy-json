@@ -3,19 +3,20 @@
 // Heavily modified
 const path = require('path');
 
-function _getCallerDir() {
+function _getCallerDir(current) {
+  if (!current) throw new Error(`current file path not provided`);
   const originalFunc = Error.prepareStackTrace;
-
   const err = new Error();
-
   Error.prepareStackTrace = function (err, stack) { return stack; };
 
   err.stack.shift();
-  const dir = path.dirname(err.stack.shift().getFileName());
+  let file = err.stack.shift().getFileName();
+  while (!file || file === current) {
+    file = err.stack.shift().getFileName();
+  }
 
   Error.prepareStackTrace = originalFunc;
-
-  return dir;
+  return path.dirname(file);
 }
 
 module.exports = _getCallerDir;

@@ -1,4 +1,5 @@
 'use strict';
 const getCallerFile = require(`../src/util/getCallerDir`);
 
-module.exports = () => getCallerFile();
+module.exports.current = () => getCallerFile();
+module.exports.correct = () => getCallerFile(__filename);
