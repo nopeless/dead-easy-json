@@ -3,6 +3,7 @@ const path = require(`path`);
 const fs = require(`fs`);
 const isSerializable = require(`./util/isSerializable`);
 const overwriteObject = require(`./util/overwriteObject`);
+const getCallerDir = require(`./util/getCallerDir`);
 const chokidar = require(`chokidar`);
 class ProxyJson {
   /**
@@ -247,19 +248,15 @@ class ProxyJson {
     });
   }
 }
-const DeadEasyJson = function(dirname = undefined) {
-  return { require: (file, defaultObj, config = {}) => {
-    if (!path.isAbsolute(file)) {
-      if (dirname === undefined) {
-        throw new Error(`Cannot require ${file} without a directory (make sure you passed __dirname to the constructor)`);
-      }
-      return new ProxyJson(path.join(dirname, file), defaultObj, config);
-    }
-    return new ProxyJson(file, defaultObj, config);
+const DeadEasyJson = function(file, defaultObj, config = {}) {
+  if (!path.isAbsolute(file)) {
+    file = path.join(getCallerDir(__filename), file);
   }
-  };
+  return new ProxyJson(file, defaultObj, config);
 };
-DeadEasyJson.require = () => {throw new Error(`You forgot to add (__dirname)`);};
+
+// TODO: remove this on the next major version
+DeadEasyJson.require = () => { throw new Error(`\`.require\` is deprecated. Please refer to the README`); };
 
 // Return an instance
 module.exports = DeadEasyJson;
