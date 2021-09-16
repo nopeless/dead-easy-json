@@ -4,13 +4,13 @@
 
 ![ci badge](https://github.com/nopeless/dead-easy-json/actions/workflows/ci.yaml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/nopeless/dead-easy-json/badge.svg?branch=main)](https://coveralls.io/github/nopeless/dead-easy-json?branch=main)
-![Dev badge](https://img.shields.io/badge/Developing%20stage-BETA-ff69b4)
+![Dev badge](https://img.shields.io/badge/Developing%20stage-Almost%20Stable-ff69b4)
 
   
 
 [![NPM](https://nodei.co/npm/dead-easy-json.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/dead-easy-json/)
 
-> Until `v2.0.0`, The package is in beta, which means design choices can change
+> `v2` should be the latest drastic change. `v2` is not compatible with `v1`
 
 ## Quickstart
 <!--INJECT ./docs/quickstart.js-->
