@@ -141,10 +141,15 @@ class ProxyJson {
     // istanbul ignore next
     this.onFileSaveError = (...args) => console.error(`onFileSaveError`, ...args);
 
-    function getJson() {
+    async function getJson() {
       let content;
       try {
         content = fs.readFileSync(dir).toString();
+        if (content === ``) {
+          // sometimes the editor just sets the string to blank and causes problems
+          await new Promise(r => setTimeout(r, 10));
+          content = fs.readFileSync(dir).toString();
+        }
         return JSON.parse(content);
       } catch (e) {
         // Please do a pr if there are other errors
@@ -160,13 +165,13 @@ class ProxyJson {
       // Spawn a watcher
       this.watchCallback = () => {};
       const watcher = chokidar.watch(this.dir);
-      watcher.on(`change`, (_, stats) => {
+      watcher.on(`change`, async (_, stats) => {
         if (this.writing) return;
         // Sync check
         if (stats.mtimeMs - this.lastWrite < 20) return;
 
         try {
-          overwriteObject(this.file, getJson());
+          overwriteObject(this.file, await getJson());
         } catch (e) {
           this.onFileSaveError(e);
         }

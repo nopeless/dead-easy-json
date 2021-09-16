@@ -246,6 +246,14 @@ describe(`Main - Blank file each time`, function() {
     it(`Should be able to watch for changes`, async function() {
       await this.awaitWrite(`{"a":{"b":3}}`);
       expect(this.file).to.deep.equal({a:{b:3}});
+      await this.awaitWrite(`{"a":{"b":4}}`);
+      expect(this.file).to.deep.equal({a:{b:4}});
+    });
+    it(`Simulate editor blank save case`, async function() {
+      // vsc for example does this
+      await this.awaitWrite(``);
+      await this.awaitWrite(`{"a":{"b":4}}`);
+      expect(this.file).to.deep.equal({a:{b:4}});
     });
     it(`Should have a 5ms cooldown (coverage test)`, async function() {
       fs.writeFileSync(filePath, `{"a":{"b":3}}`);
