@@ -1,4 +1,6 @@
 'use strict';
+
+// A non-recursive function
 function isWeakSerializable(obj) {
   var type = typeof obj;
   if (type === `object`) {
