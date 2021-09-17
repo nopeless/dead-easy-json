@@ -148,6 +148,23 @@ file.property = []
 
  - Because the reference is preserved, `myArray[3]` for example will point to the `[3]` when the file changes. If you do not want this behavior, do something like `const val = myArray[3]` then only use val.
 
+ - Object assignments will give you a proxy on nested objects. This might be confusing
+ ```js
+ const handler = require(`dead-easy-json`)(`./file.json`, {});
+const file = handler.file;
+
+let obj = {
+  prop:[],
+};
+file.test = obj;
+// obj.prop = [1,2]; // doesn't work
+obj.prop.push(42); // works
+
+obj = file.test;
+obj.prop = 42; // works
+obj.someattr = `hi`; // works
+```
+
 ## Donations
 If this project helped you save time developing prototypes, consider donating 😄
 
