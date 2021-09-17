@@ -1,7 +1,7 @@
 'use strict';
 const path = require(`path`);
 const fs = require(`fs`);
-const isSerializable = require(`./util/isSerializable`);
+const isWeakSerializable = require(`./util/isWeakSerializable`);
 const overwriteObject = require(`./util/overwriteObject`);
 const getCallerDir = require(`./util/getCallerDir`);
 const chokidar = require(`chokidar`);
@@ -92,12 +92,10 @@ class ProxyJson {
         return Reflect.preventExtensions(target, property);
       },
       set: function(target, property, value) {
-        if (!isSerializable(value)) {
-          throw new Error(`Not supported. Got type [${typeof value}]`);
-        }
         function recursiveAssign(target, property, value) {
-          // Add helpful checks to see if target is Object or Array
-
+          if (!isWeakSerializable(value)) {
+            throw new Error(`Not supported. Got type [${typeof value}]`);
+          }
           if (Array.isArray(target)) {
             if (!property.match(/^0|[1-9]\d*|length$/)) {
               throw new Error(`Not supported. Array index must be an non-negative integer with no leading 0s. Got [${property}]`);
@@ -137,7 +135,6 @@ class ProxyJson {
     this.file = this.internalSave;
     if (rewrite) this.write();
 
-    // istanbul ignore next
     this.onFileSaveError = (...args) => console.error(`onFileSaveError`, ...args);
 
     async function getJson() {
