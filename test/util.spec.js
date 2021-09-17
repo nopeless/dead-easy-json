@@ -1,5 +1,6 @@
 'use strict';
 const isSerializable = require(`../src/util/isSerializable`);
+const isWeakSerializable = require(`../src/util/isWeakSerializable`);
 const overwriteObject = require(`../src/util/overwriteObject`);
 const util = require(`util`);
 const getCallerFileSpec = require(`./getCallerDir.resource.js`);
@@ -53,6 +54,55 @@ describe(`Util functions`, function () {
       for (const s of nonSerializables) {
         it(`${s}`.replace(/[\n\r]/g, ` `), function () {
           expect(isSerializable(s), log(`Object is`, s)).to.be.false;
+        });
+      }
+    });
+  });
+  describe(`isWeakSerializable()`, function () {
+    const serializables = [
+      {},
+      { a: { b: new Function(`return 1;`)}},
+      [[1],2],
+      [1, 2, 3],
+      { a: 1, b: 2, c: 3 },
+      { a: { b: { c: { d: 1 } } } },
+      [1,2, new Error(`test`)],
+      true,
+      false,
+      null,
+      ``,
+      1,
+      undefined,
+      new Date(),
+      new String(`test`), // This is technically not allowed, but a case that is checked anyway
+      new Boolean(true), // This as well
+      new Number(1),
+      /i am a regex/igms,
+    ];
+    const nonSerializables = [
+      new ArrayBuffer(4),
+      new Map([[1, 2], [3, 4]]),
+      new Set([1, 2, 3]),
+      new Promise(function (resolve) {
+        resolve(1);
+      }),
+      new Error(`test`),
+      new Function(`return 1;`),
+    ];
+    function log(msg, s) {
+      return `${msg}\n${util.format.apply(null, [s]).toString().replace(/[\n\r]/g, ` `)}`;
+    }
+    describe(`Should weak serialize`, function () {
+      for (const s of serializables) {
+        it(`${s}`.replace(/[\n\r]/g, ` `), function () {
+          expect(isWeakSerializable(s), log(`Object is`, s)).to.be.true;
+        });
+      }
+    });
+    describe(`Should not weak serialize`, function () {
+      for (const s of nonSerializables) {
+        it(`${s}`.replace(/[\n\r]/g, ` `), function () {
+          expect(isWeakSerializable(s), log(`Object is`, s)).to.be.false;
         });
       }
     });
