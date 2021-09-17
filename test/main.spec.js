@@ -85,6 +85,16 @@ describe(`Main - Blank file each time`, function() {
     JSONrequire(filePath);
     expect(fileAsJson()).to.deep.equal({});
   });
+  it(`File with {} already written should be recognized`, function() {
+    fs.writeFileSync(filePath, `{}`);
+    JSONrequire(filePath);
+    expect(fileAsJson()).to.deep.equal({});
+  });
+  it(`File with [] already written should be recognized`, function() {
+    fs.writeFileSync(filePath, `[]`);
+    JSONrequire(filePath);
+    expect(fileAsJson()).to.deep.equal([]);
+  });
   it(`Should be a custom Object if set`, function() {
     JSONrequire(filePath, [1]);
     expect(fileAsJson()).to.deep.equal([1]);
@@ -251,7 +261,11 @@ describe(`Main - Blank file each time`, function() {
     });
     it(`Simulate editor blank save case`, async function() {
       // vsc for example does this
+      // The below function will trigger a console.error
+      const e = console.error;
+      console.error = () => {};
       await this.awaitWrite(``);
+      console.error = e;
       await this.awaitWrite(`{"a":{"b":4}}`);
       expect(this.file).to.deep.equal({a:{b:4}});
     });
