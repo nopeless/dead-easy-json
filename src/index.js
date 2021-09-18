@@ -5,6 +5,46 @@ const isWeakSerializable = require(`./util/isWeakSerializable`);
 const overwriteObject = require(`./util/overwriteObject`);
 const getCallerDir = require(`./util/getCallerDir`);
 const chokidar = require(`chokidar`);
+
+const isProxy = Symbol(`proxy`);
+
+function objectShallowChangeCallback(obj, cb) {
+  console.log(`called`);
+  obj[isProxy] = true;
+  for (const key in obj) {
+    let o = obj[key];
+    Object.defineProperty(obj, key, {
+      configurable: true,
+      enumerable: true,
+      // value: 1,
+      get: function () {
+        return o;
+      },
+      set: function (val) {
+        cb(key, val);
+        o = val;
+      },
+    });
+  }
+  Object.setPrototypeOf(obj, new Proxy({}, {
+    set(_, property, value) {
+      cb(property, value);
+      let o = value;
+      Object.defineProperty(obj, property, {
+        configurable: true,
+        enumerable: true,
+        // value: 1,
+        get: function () {
+          return o;
+        },
+        set: function (val) {
+          o = val;
+        },
+      });
+    },
+  }));
+}
+
 class ProxyJson {
   /**
    * The no-interval version
@@ -92,7 +132,8 @@ class ProxyJson {
       set: function(target, property, value) {
         function recursiveAssign(target, property, value) {
           if (!isWeakSerializable(value)) {
-            throw new Error(`Not supported. Got type [${typeof value}]`);
+            console.log(`val`, value);
+            throw new Error(`Not supported. Got type [${typeof value}]`, value);
           }
           if (Array.isArray(target)) {
             if (!property.match(/^0|[1-9]\d*|length$/)) {
@@ -102,11 +143,24 @@ class ProxyJson {
           if (!(typeof value === `object` && value !== null)) {
             return Reflect.set(target, property, value);
           }
-          const res = Reflect.set(target, property, new Proxy(value, handler));
+          let res;
+          if (!value[isProxy]) {
+            res = Reflect.set(target, property, new Proxy(value, handler));
+          } else {
+            res = value;
+          }
           for (const k of Object.keys(value)) {
             recursiveAssign(value, k, value[k]);
           }
           return res;
+        }
+        // Tap into object
+        if (Array.isArray(value) || typeof value === `object` && value !== null) {
+          console.log(`object`, value);
+          objectShallowChangeCallback(value, (key, val) => {
+            target[key] = val;
+            m.scheduleWrite();
+          });
         }
         const res = recursiveAssign(target, property, value);
         m.scheduleWrite();

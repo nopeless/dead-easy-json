@@ -10,8 +10,12 @@ const {expect, assert } = require(`chai`);
 
 describe(`Util functions`, function () {
   describe(`isSerializable()`, function () {
+    const proxyArr = [];
+    proxyArr[Symbol()] = 1;
     const serializables = [
       {},
+      {[Symbol()]: 1},
+      proxyArr,
       [[1],2],
       [1, 2, 3],
       { a: 1, b: 2, c: 3 },
@@ -59,8 +63,12 @@ describe(`Util functions`, function () {
     });
   });
   describe(`isWeakSerializable()`, function () {
+    const proxyArr = [];
+    proxyArr[Symbol()] = 1;
     const serializables = [
       {},
+      {[Symbol()]: 1},
+      proxyArr,
       { a: { b: new Function(`return 1;`)}},
       [[1],2],
       [1, 2, 3],
