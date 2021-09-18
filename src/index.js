@@ -15,7 +15,6 @@ class ProxyJson {
    */
   constructor(dir, defaultObj = undefined, config) {
     const str = fs.readFileSync(dir).toString();
-    let rewrite = false;
     let readObj;
     if (str !== ``) {
       const o = JSON.parse(str);
@@ -33,7 +32,6 @@ class ProxyJson {
     if (defaultObj === undefined) {
       defaultObj = Array.isArray(readObj) ? [] : {};
     }
-    else rewrite = true;
     this.dir = dir;
     this.writing = false;
     this.config = {
@@ -133,7 +131,6 @@ class ProxyJson {
       };
     }
     this.file = this.internalSave;
-    if (rewrite) this.write();
 
     this.onFileSaveError = (...args) => console.error(`onFileSaveError`, ...args);
 
